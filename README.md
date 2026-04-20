@@ -36,6 +36,22 @@ This is an MVP. It uses a practical filter chain, not AI source separation or st
 
 4. Open `http://127.0.0.1:5000`
 
+## Deploy on Render
+
+This repo includes [render.yaml](/Users/nabinadhikari/Documents/Programming/Personal/old_nepali_music_refiner/render.yaml) for a simple Render deployment.
+
+1. Create a free account at Render and connect your GitHub account.
+2. In Render, choose `New` -> `Blueprint`.
+3. Select this repository: `nabinadhikariofficial/old_nepali_music_refiner`
+4. Confirm the blueprint and deploy.
+
+Render will use:
+
+- Build command: `pip install -r requirements.txt`
+- Start command: `gunicorn app:app`
+
+After the first deploy, Render gives you a public `onrender.com` URL that you can share.
+
 ## Requirements
 
 - Python 3.9+
