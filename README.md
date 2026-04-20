@@ -58,6 +58,32 @@ ENABLE_YOUTUBE_DOWNLOADS=true python3 app.py
 
 This is intended for local use only. It is not reliable for a public deployed app.
 
+## Local verification
+
+If you want to verify the YouTube-to-enhancement flow for a report or demo, do it locally:
+
+```bash
+cd /Users/nabinadhikari/Documents/Programming/Personal/old_nepali_music_refiner
+source .venv/bin/activate
+pip install -r requirements.txt
+ENABLE_YOUTUBE_DOWNLOADS=true python3 app.py
+```
+
+Then open `http://127.0.0.1:5000` and:
+
+1. Paste a rights-cleared or your-own video URL into `YouTube song link`
+2. If needed, choose your browser in `Browser cookies for YouTube`
+3. Pick a preset
+4. Click `Enhance Song`
+
+For a terminal-only proof, you can also test `yt-dlp` directly first:
+
+```bash
+yt-dlp --cookies-from-browser chrome -f bestaudio --extract-audio --audio-format mp3 "YOUR_URL"
+```
+
+Then upload the resulting MP3 into the app and compare the before/after preview.
+
 ## Requirements
 
 - Python 3.9+
