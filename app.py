@@ -23,6 +23,7 @@ PROCESSED_DIR = BASE_DIR / "processed"
 PREVIEW_DIR = BASE_DIR / "previews"
 ALLOWED_EXTENSIONS = {".mp3", ".wav", ".flac", ".m4a", ".aac", ".ogg"}
 SUPPORTED_BROWSERS = {"chrome", "chromium", "firefox", "safari", "edge", "brave", "vivaldi"}
+YOUTUBE_DOWNLOADS_ENABLED = os.environ.get("ENABLE_YOUTUBE_DOWNLOADS", "").lower() in {"1", "true", "yes", "on"}
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 100 * 1024 * 1024
@@ -48,7 +49,13 @@ def default_form_values() -> dict:
 def render_index(**context):
     values = default_form_values()
     values.update(context.pop("values", {}))
-    return render_template("index.html", presets=PRESETS, values=values, **context)
+    return render_template(
+        "index.html",
+        presets=PRESETS,
+        values=values,
+        youtube_downloads_enabled=YOUTUBE_DOWNLOADS_ENABLED,
+        **context,
+    )
 
 
 @app.get("/")
@@ -110,6 +117,14 @@ def enhance():
     token = secrets.token_hex(6)
 
     if youtube_url:
+        if not YOUTUBE_DOWNLOADS_ENABLED:
+            return render_index(
+                error=(
+                    "YouTube link importing is disabled on this hosted app. Download the song on your own "
+                    "device first, then upload the audio file here for enhancement."
+                ),
+                values=form_values,
+            ), 400
         browser = browser_cookies if browser_cookies in SUPPORTED_BROWSERS else None
         try:
             input_path = download_youtube_audio(youtube_url, UPLOAD_DIR, token, browser=browser)
@@ -118,7 +133,11 @@ def enhance():
     else:
         if uploaded_file is None or uploaded_file.filename == "":
             return render_index(
-                error="Provide a YouTube link or choose an audio file first.",
+                error=(
+                    "Choose an audio file first."
+                    if not YOUTUBE_DOWNLOADS_ENABLED
+                    else "Provide a YouTube link or choose an audio file first."
+                ),
                 values=form_values,
             ), 400
 

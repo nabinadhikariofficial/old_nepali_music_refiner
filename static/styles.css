@@ -246,12 +246,32 @@ select {
 .preset-card,
 .mode-card,
 .preview-card,
+.info-banner,
 .empty-state,
 .result-card {
   padding: 1rem;
   border-radius: 22px;
   background: rgba(255, 251, 243, 0.76);
   border: 1px solid rgba(80, 50, 33, 0.08);
+}
+
+.info-banner {
+  display: grid;
+  gap: 0.35rem;
+  background: linear-gradient(180deg, rgba(245, 239, 228, 0.95), rgba(233, 223, 205, 0.82));
+}
+
+.info-banner strong {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.74rem;
+  color: var(--accent-dark);
+}
+
+.info-banner span {
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.6;
 }
 
 .preset-card input,

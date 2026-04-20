@@ -46,28 +46,35 @@
             <h2>Bring in your song</h2>
           </div>
 
-          <label class="field">
-            <span>YouTube song link</span>
-            <input type="url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=..." value="{{ values.youtube_url }}">
-            <small>Paste a single YouTube video link. If this is filled in, it will be used instead of file upload.</small>
-          </label>
+          {% if youtube_downloads_enabled %}
+            <label class="field">
+              <span>YouTube song link</span>
+              <input type="url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=..." value="{{ values.youtube_url }}">
+              <small>Paste a single YouTube video link. If this is filled in, it will be used instead of file upload.</small>
+            </label>
 
-          <label class="field">
-            <span>Browser cookies for YouTube</span>
-            <select name="browser_cookies">
-              <option value="">Do not use browser cookies</option>
-              <option value="chrome" {% if values.browser_cookies == "chrome" %}selected{% endif %}>Chrome</option>
-              <option value="safari" {% if values.browser_cookies == "safari" %}selected{% endif %}>Safari</option>
-              <option value="firefox" {% if values.browser_cookies == "firefox" %}selected{% endif %}>Firefox</option>
-              <option value="edge" {% if values.browser_cookies == "edge" %}selected{% endif %}>Edge</option>
-              <option value="brave" {% if values.browser_cookies == "brave" %}selected{% endif %}>Brave</option>
-              <option value="chromium" {% if values.browser_cookies == "chromium" %}selected{% endif %}>Chromium</option>
-              <option value="vivaldi" {% if values.browser_cookies == "vivaldi" %}selected{% endif %}>Vivaldi</option>
-            </select>
-            <small>Select the browser where the video plays while you are logged in. This helps with YouTube 403 and bot checks.</small>
-          </label>
+            <label class="field">
+              <span>Browser cookies for YouTube</span>
+              <select name="browser_cookies">
+                <option value="">Do not use browser cookies</option>
+                <option value="chrome" {% if values.browser_cookies == "chrome" %}selected{% endif %}>Chrome</option>
+                <option value="safari" {% if values.browser_cookies == "safari" %}selected{% endif %}>Safari</option>
+                <option value="firefox" {% if values.browser_cookies == "firefox" %}selected{% endif %}>Firefox</option>
+                <option value="edge" {% if values.browser_cookies == "edge" %}selected{% endif %}>Edge</option>
+                <option value="brave" {% if values.browser_cookies == "brave" %}selected{% endif %}>Brave</option>
+                <option value="chromium" {% if values.browser_cookies == "chromium" %}selected{% endif %}>Chromium</option>
+                <option value="vivaldi" {% if values.browser_cookies == "vivaldi" %}selected{% endif %}>Vivaldi</option>
+              </select>
+              <small>Select the browser where the video plays while you are logged in. This helps with YouTube 403 and bot checks.</small>
+            </label>
 
-          <div class="divider"><span>or</span></div>
+            <div class="divider"><span>or</span></div>
+          {% else %}
+            <div class="info-banner">
+              <strong>Hosted mode</strong>
+              <span>YouTube importing is disabled here because public servers get blocked by YouTube. Download the song on your device first, then upload the audio file below.</span>
+            </div>
+          {% endif %}
 
           <label class="file-input">
             <span>Choose audio file</span>
@@ -172,7 +179,7 @@
             </div>
           {% else %}
             <div class="empty-state">
-              <p>Choose a song, pick a preset, and the page will show a short before and after sample here.</p>
+              <p>Upload a song, pick a preset, and the page will show a short before and after sample here.</p>
             </div>
           {% endif %}
         </aside>

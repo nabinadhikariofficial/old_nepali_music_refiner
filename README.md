@@ -1,17 +1,27 @@
 # Old Nepali Music Refiner
 
-A small local web app for improving old Nepali songs with `ffmpeg`.
+A Flask app for improving old Nepali songs with restoration presets, preview clips, and optional advanced controls.
 
 ## What it does
 
 - Upload an old recording
-- Paste a YouTube link for a song
 - Start from ready-made restoration presets
 - Compare a short before/after preview on the page
 - Switch to professional mode for manual tuning
 - Download the full enhanced MP3
 
-This is an MVP. It uses a practical filter chain, not AI source separation or studio-grade restoration.
+This app uses a practical `ffmpeg`-based restoration pipeline, not AI source separation or studio-grade mastering.
+
+## Hosted vs local
+
+There are two intended modes:
+
+- Hosted/shared app:
+  Upload audio files only. This is the practical public setup.
+- Local app on your own machine:
+  Optional YouTube importing can be enabled if you want to experiment with it.
+
+The reason for this split is simple: public hosting providers are frequently blocked by YouTube anti-bot checks, even when `yt-dlp` is configured correctly. Because of that, YouTube importing is disabled by default in the deployed app.
 
 ## Run locally
 
@@ -36,52 +46,52 @@ This is an MVP. It uses a practical filter chain, not AI source separation or st
 
 4. Open `http://127.0.0.1:5000`
 
+## Enable YouTube importing locally
+
+YouTube support is off by default. To enable it on your own machine:
+
+```bash
+ENABLE_YOUTUBE_DOWNLOADS=true python3 app.py
+```
+
+This is intended for local use only. It is not reliable for a public deployed app.
+
 ## Deploy on Render
 
-This repo includes [render.yaml](/Users/nabinadhikari/Documents/Programming/Personal/old_nepali_music_refiner/render.yaml) for a simple Render deployment.
+This repo includes `render.yaml` for Render deployment.
 
-1. Create a free account at Render and connect your GitHub account.
-2. In Render, choose `New` -> `Blueprint`.
-3. Select this repository: `nabinadhikariofficial/old_nepali_music_refiner`
-4. Confirm the blueprint and deploy.
+After deployment, the shared app should be treated as upload-first:
 
-Render will use:
+- upload an audio file
+- choose a preset
+- preview before/after
+- download the enhanced result
 
-- Build command: `pip install -r requirements.txt`
-- Start command: `gunicorn app:app`
-
-After the first deploy, Render gives you a public `onrender.com` URL that you can share.
+Do not rely on YouTube URL importing in the public deployment.
 
 ## Requirements
 
 - Python 3.9+
 - `ffmpeg` available on your system path
-- Internet access when downloading from YouTube
+- Node.js 20+ if you enable YouTube importing locally
 
 ## Notes
 
 - Supported input types: `mp3`, `wav`, `flac`, `m4a`, `aac`, `ogg`
-- YouTube downloads are handled through `yt-dlp[default]`
+- Preview clips are written to `previews/`
 - Max upload size is 100 MB
 - Processed files are written to `processed/`
-- Short preview clips are written to `previews/`
+- `yt-dlp[default]` is included only for local YouTube importing
 
-## YouTube 403 note
+## Why YouTube is disabled on the deployed app
 
-If YouTube downloading fails with `HTTP Error 403: Forbidden`, reinstall the app dependencies:
+`yt-dlp` can work locally because it can sometimes reuse your browser session and local network context. On a public host, that breaks down:
 
-```bash
-pip install -r requirements.txt
-```
+- the server IP is different from your browser IP
+- browser cookies are not safely available to the server
+- YouTube often returns bot/auth challenges to hosted environments
 
-This app expects:
+So the practical product decision is:
 
-- `yt-dlp[default]`
-- Node.js 20 or newer on your `PATH`
-
-That follows the current `yt-dlp` guidance for YouTube's JavaScript challenge flow.
-
-If a public YouTube URL still fails, try the browser cookie selector in the UI and choose the browser where you are already signed in to YouTube. `yt-dlp` supports browser-cookie loading, and recent issue reports indicate this can succeed when plain requests are blocked:
-
-- https://github.com/yt-dlp/yt-dlp/blob/master/yt_dlp/YoutubeDL.py
-- https://github.com/yt-dlp/yt-dlp/issues/12912
+- shared deployment = file upload workflow
+- local machine = optional YouTube workflow
