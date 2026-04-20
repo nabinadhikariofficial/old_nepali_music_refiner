@@ -274,6 +274,27 @@ select {
   line-height: 1.6;
 }
 
+.hosted-tools {
+  gap: 0.9rem;
+}
+
+.open-link {
+  border-radius: 999px;
+  padding: 0.9rem 1.25rem;
+  width: fit-content;
+  background: linear-gradient(135deg, #8d5a2d 0%, #b9824c 100%);
+  color: #fff9f0;
+  text-decoration: none;
+  font-weight: 800;
+  box-shadow: 0 14px 28px rgba(121, 77, 41, 0.22);
+}
+
+.open-link.disabled-link {
+  pointer-events: none;
+  opacity: 0.55;
+  box-shadow: none;
+}
+
 .preset-card input,
 .mode-card input {
   position: absolute;

@@ -2,6 +2,8 @@
 
 A Flask app for improving old Nepali songs with restoration presets, preview clips, and optional advanced controls.
 
+Live app: https://old-nepali-music-refiner.onrender.com/
+
 ## What it does
 
 - Upload an old recording
@@ -55,19 +57,6 @@ ENABLE_YOUTUBE_DOWNLOADS=true python3 app.py
 ```
 
 This is intended for local use only. It is not reliable for a public deployed app.
-
-## Deploy on Render
-
-This repo includes `render.yaml` for Render deployment.
-
-After deployment, the shared app should be treated as upload-first:
-
-- upload an audio file
-- choose a preset
-- preview before/after
-- download the enhanced result
-
-Do not rely on YouTube URL importing in the public deployment.
 
 ## Requirements
 

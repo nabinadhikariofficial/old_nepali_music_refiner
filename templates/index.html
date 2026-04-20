@@ -70,9 +70,15 @@
 
             <div class="divider"><span>or</span></div>
           {% else %}
-            <div class="info-banner">
+            <div class="info-banner hosted-tools">
               <strong>Hosted mode</strong>
-              <span>YouTube importing is disabled here because public servers get blocked by YouTube. Download the song on your device first, then upload the audio file below.</span>
+              <span>YouTube importing is disabled here because public servers get blocked by YouTube. Use this area to open the song link on your own device, download it there, and then upload the audio file below.</span>
+              <label class="field">
+                <span>Song link to open</span>
+                <input id="source-link-input" type="url" placeholder="https://www.youtube.com/watch?v=...">
+                <small>Paste the song URL here, open it in a new tab, download it on your device, then upload the audio file below.</small>
+              </label>
+              <a id="source-link-button" class="open-link disabled-link" href="#" target="_blank" rel="noreferrer">Open Song Link</a>
             </div>
           {% endif %}
 
@@ -185,5 +191,22 @@
         </aside>
       </section>
     </main>
+    <script>
+      const sourceLinkInput = document.getElementById("source-link-input");
+      const sourceLinkButton = document.getElementById("source-link-button");
+
+      if (sourceLinkInput && sourceLinkButton) {
+        const syncSourceLink = () => {
+          const value = sourceLinkInput.value.trim();
+          const hasUrl = value.length > 0;
+          sourceLinkButton.href = hasUrl ? value : "#";
+          sourceLinkButton.classList.toggle("disabled-link", !hasUrl);
+          sourceLinkButton.setAttribute("aria-disabled", String(!hasUrl));
+        };
+
+        sourceLinkInput.addEventListener("input", syncSourceLink);
+        syncSourceLink();
+      }
+    </script>
   </body>
 </html>
