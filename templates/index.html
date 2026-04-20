@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Old Nepali Music Refiner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Cormorant+Garamond:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero-shell">
+        <section class="hero">
+          <p class="eyebrow">Old To New Listening</p>
+          <h1>Give classic Nepali songs a cleaner second life.</h1>
+          <p class="lead">
+            Start with a preset tuned for old recordings, hear a short before and after sample on the page, and switch to professional mode only when you want manual control.
+          </p>
+          <div class="hero-notes">
+            <div class="note-card">
+              <strong>Preset-first workflow</strong>
+              <span>No need to guess slider values for every song.</span>
+            </div>
+            <div class="note-card">
+              <strong>Instant audio preview</strong>
+              <span>Listen to a small comparison sample before downloading the full export.</span>
+            </div>
+          </div>
+        </section>
+
+        <aside class="moodboard">
+          <div class="record"></div>
+          <div class="tape">
+            <span>Archive</span>
+            <span>Refined</span>
+          </div>
+        </aside>
+      </section>
+
+      <section class="panel app-grid">
+        <form action="/enhance" method="post" enctype="multipart/form-data" class="form">
+          <div class="section-heading">
+            <p>Source</p>
+            <h2>Bring in your song</h2>
+          </div>
+
+          <label class="field">
+            <span>YouTube song link</span>
+            <input type="url" name="youtube_url" placeholder="https://www.youtube.com/watch?v=..." value="{{ values.youtube_url }}">
+            <small>Paste a single YouTube video link. If this is filled in, it will be used instead of file upload.</small>
+          </label>
+
+          <label class="field">
+            <span>Browser cookies for YouTube</span>
+            <select name="browser_cookies">
+              <option value="">Do not use browser cookies</option>
+              <option value="chrome" {% if values.browser_cookies == "chrome" %}selected{% endif %}>Chrome</option>
+              <option value="safari" {% if values.browser_cookies == "safari" %}selected{% endif %}>Safari</option>
+              <option value="firefox" {% if values.browser_cookies == "firefox" %}selected{% endif %}>Firefox</option>
+              <option value="edge" {% if values.browser_cookies == "edge" %}selected{% endif %}>Edge</option>
+              <option value="brave" {% if values.browser_cookies == "brave" %}selected{% endif %}>Brave</option>
+              <option value="chromium" {% if values.browser_cookies == "chromium" %}selected{% endif %}>Chromium</option>
+              <option value="vivaldi" {% if values.browser_cookies == "vivaldi" %}selected{% endif %}>Vivaldi</option>
+            </select>
+            <small>Select the browser where the video plays while you are logged in. This helps with YouTube 403 and bot checks.</small>
+          </label>
+
+          <div class="divider"><span>or</span></div>
+
+          <label class="file-input">
+            <span>Choose audio file</span>
+            <input type="file" name="audio_file" accept=".mp3,.wav,.flac,.m4a,.aac,.ogg">
+          </label>
+
+          <div class="section-heading">
+            <p>Restoration Style</p>
+            <h2>Pick a preset</h2>
+          </div>
+
+          <div class="preset-grid">
+            {% for preset_key, preset in presets.items() %}
+              <label class="preset-card">
+                <input type="radio" name="preset" value="{{ preset_key }}" {% if values.preset == preset_key %}checked{% endif %}>
+                <span class="preset-content">
+                  <strong>{{ preset.label }}</strong>
+                  <small>{{ preset.description }}</small>
+                </span>
+              </label>
+            {% endfor %}
+          </div>
+
+          <div class="mode-switch">
+            <label class="mode-card">
+              <input type="radio" name="mode" value="preset" {% if values.mode != "professional" %}checked{% endif %}>
+              <span>Preset Mode</span>
+              <small>Use the preset exactly as tuned.</small>
+            </label>
+            <label class="mode-card">
+              <input type="radio" name="mode" value="professional" {% if values.mode == "professional" %}checked{% endif %}>
+              <span>Professional Mode</span>
+              <small>Open the manual controls for custom tweaking.</small>
+            </label>
+          </div>
+
+          <details class="pro-panel" {% if values.mode == "professional" %}open{% endif %}>
+            <summary>Professional controls</summary>
+
+            <label class="field">
+              <span>Noise reduction</span>
+              <input type="range" name="noise_reduction" min="6" max="30" value="{{ values.noise_reduction }}">
+              <small>Higher values remove more hiss, but can dull the track.</small>
+            </label>
+
+            <label class="field">
+              <span>Warmth</span>
+              <input type="range" name="warmth" min="-4" max="6" value="{{ values.warmth }}">
+              <small>Add low-mid body to thin archival recordings.</small>
+            </label>
+
+            <label class="field">
+              <span>Presence</span>
+              <input type="range" name="presence" min="-4" max="6" value="{{ values.presence }}">
+              <small>Bring vocals and melody forward.</small>
+            </label>
+
+            <label class="checkbox">
+              <input type="checkbox" name="normalize" {% if values.normalize %}checked{% endif %}>
+              <span>Normalize loudness for easier listening</span>
+            </label>
+          </details>
+
+          <label class="checkbox">
+            <input type="checkbox" checked disabled>
+            <span>Normalize loudness for easier listening</span>
+          </label>
+
+          <button type="submit">Enhance Song</button>
+        </form>
+
+        <aside class="results">
+          <div class="section-heading">
+            <p>Preview</p>
+            <h2>Hear the change</h2>
+          </div>
+
+          {% if error %}
+            <p class="error">{{ error }}</p>
+          {% endif %}
+
+          {% if result %}
+            <div class="result-card">
+              <div class="result-top">
+                <div>
+                  <p class="result-kicker">{{ result.preset_label }}</p>
+                  <h3>{{ "Professional Mode" if result.mode == "professional" else "Preset Mode" }}</h3>
+                </div>
+                <a class="download-link" href="{{ result.download_url }}" download="{{ result.download_name }}">Download Full Song</a>
+              </div>
+
+              <div class="preview-stack">
+                <div class="preview-card">
+                  <span>Before</span>
+                  <audio controls preload="none" src="{{ result.input_preview_url }}"></audio>
+                </div>
+                <div class="preview-card enhanced">
+                  <span>After</span>
+                  <audio controls preload="none" src="{{ result.output_preview_url }}"></audio>
+                </div>
+              </div>
+            </div>
+          {% else %}
+            <div class="empty-state">
+              <p>Choose a song, pick a preset, and the page will show a short before and after sample here.</p>
+            </div>
+          {% endif %}
+        </aside>
+      </section>
+    </main>
+  </body>
+</html>
